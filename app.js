@@ -2,15 +2,13 @@ const grid = document.getElementById("grid")
 
 let products=[]
 
-// создаём много товаров
-for(let i=1;i<=200;i++){
-
+// создаём список товаров
+for(let i=1;i<=300;i++){
 products.push({
 name:"Товар "+i,
 price:(50+i)+" ₽",
 img:"https://picsum.photos/200?random="+i
 })
-
 }
 
 let selectedScreenPosition=null
@@ -39,16 +37,14 @@ grid.appendChild(card)
 
 render()
 
-// splash экран
+
+// splash
 setTimeout(()=>{
-
 document.getElementById("splash").style.display="none"
-
 },2000)
 
 
-
-// выбор позиции на экране
+// выбор позиции НА ЭКРАНЕ
 grid.addEventListener("click",(e)=>{
 
 const cards=document.querySelectorAll(".card")
@@ -64,7 +60,7 @@ e.clientY>r.top &&
 e.clientY<r.bottom
 ){
 
-selectedScreenPosition=i % 6
+selectedScreenPosition = i % 6
 
 console.log("Выбрана позиция экрана:",selectedScreenPosition)
 
@@ -75,27 +71,18 @@ console.log("Выбрана позиция экрана:",selectedScreenPosition
 })
 
 
+// отслеживаем скролл
+let scrollTimer=null
 
-// свайп
-let startY=0
+window.addEventListener("scroll",()=>{
 
-window.addEventListener("touchstart",(e)=>{
+clearTimeout(scrollTimer)
 
-startY=e.touches[0].clientY
+scrollTimer=setTimeout(()=>{
 
-})
+placePomelo()
 
-
-
-window.addEventListener("touchend",(e)=>{
-
-let endY=e.changedTouches[0].clientY
-
-if(endY-startY>80){
-
-setTimeout(placePomelo,200)
-
-}
+},150)
 
 })
 
@@ -107,15 +94,16 @@ if(selectedScreenPosition===null) return
 
 const card=document.querySelector(".card")
 
-const cardHeight=card.offsetHeight+10
+const cardHeight = card.offsetHeight + 10
 
-const scrollY=window.scrollY
+const scrollY = window.scrollY
 
-const firstVisibleRow=Math.floor(scrollY/cardHeight)
+const firstVisibleRow = Math.floor(scrollY / cardHeight)
 
-const targetIndex=firstVisibleRow*2+selectedScreenPosition
+const targetIndex = firstVisibleRow*2 + selectedScreenPosition
 
-// если раньше уже было помело — вернуть товар
+
+// убрать старое помело
 if(pomeloIndex!==null){
 
 products[pomeloIndex]={
@@ -126,6 +114,8 @@ img:"https://picsum.photos/200?random="+pomeloIndex
 
 }
 
+
+// поставить новое
 products[targetIndex]={
 name:"Помело",
 price:"199 ₽",
