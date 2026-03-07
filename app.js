@@ -2,7 +2,8 @@ const grid = document.getElementById("grid")
 
 let products=[]
 
-for(let i=1;i<=80;i++){
+// создаём много товаров
+for(let i=1;i<=200;i++){
 
 products.push({
 name:"Товар "+i,
@@ -12,7 +13,8 @@ img:"https://picsum.photos/200?random="+i
 
 }
 
-let secretIndex=null
+let selectedScreenPosition=null
+let pomeloIndex=null
 
 function render(){
 
@@ -37,6 +39,7 @@ grid.appendChild(card)
 
 render()
 
+// splash экран
 setTimeout(()=>{
 
 document.getElementById("splash").style.display="none"
@@ -45,6 +48,7 @@ document.getElementById("splash").style.display="none"
 
 
 
+// выбор позиции на экране
 grid.addEventListener("click",(e)=>{
 
 const cards=document.querySelectorAll(".card")
@@ -60,9 +64,9 @@ e.clientY>r.top &&
 e.clientY<r.bottom
 ){
 
-secretIndex=i
+selectedScreenPosition=i % 6
 
-console.log("Выбрана ячейка:",i)
+console.log("Выбрана позиция экрана:",selectedScreenPosition)
 
 }
 
@@ -71,6 +75,8 @@ console.log("Выбрана ячейка:",i)
 })
 
 
+
+// свайп
 let startY=0
 
 window.addEventListener("touchstart",(e)=>{
@@ -79,24 +85,55 @@ startY=e.touches[0].clientY
 
 })
 
+
+
 window.addEventListener("touchend",(e)=>{
 
 let endY=e.changedTouches[0].clientY
 
 if(endY-startY>80){
 
-if(secretIndex!==null){
+setTimeout(placePomelo,200)
 
-products[secretIndex]={
+}
+
+})
+
+
+
+function placePomelo(){
+
+if(selectedScreenPosition===null) return
+
+const card=document.querySelector(".card")
+
+const cardHeight=card.offsetHeight+10
+
+const scrollY=window.scrollY
+
+const firstVisibleRow=Math.floor(scrollY/cardHeight)
+
+const targetIndex=firstVisibleRow*2+selectedScreenPosition
+
+// если раньше уже было помело — вернуть товар
+if(pomeloIndex!==null){
+
+products[pomeloIndex]={
+name:"Товар "+pomeloIndex,
+price:(50+pomeloIndex)+" ₽",
+img:"https://picsum.photos/200?random="+pomeloIndex
+}
+
+}
+
+products[targetIndex]={
 name:"Помело",
 price:"199 ₽",
 img:"https://upload.wikimedia.org/wikipedia/commons/6/6c/Pomelo_fruit.jpg"
 }
 
+pomeloIndex=targetIndex
+
 render()
 
 }
-
-}
-
-})
