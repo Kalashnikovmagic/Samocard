@@ -2,8 +2,11 @@ const container = document.getElementById("container");
 
 let selectedPosition = null;
 let controlImageElement = null;
-let scrollActivated = false;
+let scrollDone = false;
 
+let lastTapTime = 0;
+
+// список картинок
 const imagesList = [
   {src:"images/fake.jpg", type:"normal"},
   {src:"images/control.jpg", type:"control"},
@@ -19,7 +22,7 @@ function renderImages(){
 
   container.innerHTML = "";
 
-  imagesList.forEach((item,index)=>{
+  imagesList.forEach((item)=>{
 
     const div = document.createElement("div");
     div.className = "image-card";
@@ -59,10 +62,7 @@ setTimeout(()=>{
 
 
 
-let lastTapTime = 0;
-
-
-// ДВОЙНОЙ ТАП
+// ДВОЙНОЙ ТАП — только запоминаем выбор
 container.addEventListener("click",(e)=>{
 
   const target = e.target;
@@ -70,7 +70,7 @@ container.addEventListener("click",(e)=>{
   if(target.tagName !== "IMG") return;
   if(target.dataset.type !== "control") return;
 
-  const now = new Date().getTime();
+  const now = Date.now();
 
   if(now - lastTapTime < 300){
 
@@ -84,14 +84,13 @@ container.addEventListener("click",(e)=>{
 
     selectedPosition = row * 2 + col + 1;
 
-    console.log("позиция выбрана:", selectedPosition);
+    console.log("выбрано:", selectedPosition);
 
-    // меняем картинку
     if(controlImageElement){
       controlImageElement.src = "images/control2.jpg";
     }
 
-    // НИЧЕГО БОЛЬШЕ НЕ ДЕЛАЕМ
+    scrollDone = false;
 
   }
 
@@ -101,20 +100,21 @@ container.addEventListener("click",(e)=>{
 
 
 
-// ПЕРВЫЙ СКРОЛЛ ПОЛЬЗОВАТЕЛЯ
-window.addEventListener("scroll",()=>{
+// ПЕРВОЕ движение пальца (это и есть пользовательский скрол)
+window.addEventListener("touchmove",()=>{
 
   if(selectedPosition === null) return;
-  if(scrollActivated) return;
+  if(scrollDone) return;
 
-  scrollActivated = true;
+  scrollDone = true;
 
   const pomeloIndex = 1 + selectedPosition;
-
   const target = container.children[pomeloIndex];
 
-  target.scrollIntoView({
-    behavior:"smooth"
-  });
+  setTimeout(()=>{
+    target.scrollIntoView({
+      behavior:"smooth"
+    });
+  },50);
 
 });
