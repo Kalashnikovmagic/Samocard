@@ -2,13 +2,15 @@ const grid = document.getElementById("grid")
 
 let products=[]
 
-// создаём список товаров
-for(let i=1;i<=300;i++){
+// создаём много товаров
+for(let i=1;i<=400;i++){
+
 products.push({
 name:"Товар "+i,
 price:(50+i)+" ₽",
 img:"https://picsum.photos/200?random="+i
 })
+
 }
 
 let selectedScreenPosition=null
@@ -37,14 +39,16 @@ grid.appendChild(card)
 
 render()
 
-
 // splash
 setTimeout(()=>{
+
 document.getElementById("splash").style.display="none"
+
 },2000)
 
 
-// выбор позиции НА ЭКРАНЕ
+
+// выбор позиции на экране
 grid.addEventListener("click",(e)=>{
 
 const cards=document.querySelectorAll(".card")
@@ -60,9 +64,9 @@ e.clientY>r.top &&
 e.clientY<r.bottom
 ){
 
-selectedScreenPosition = i % 6
+selectedScreenPosition=i%6
 
-console.log("Выбрана позиция экрана:",selectedScreenPosition)
+console.log("позиция экрана:",selectedScreenPosition)
 
 }
 
@@ -71,22 +75,63 @@ console.log("Выбрана позиция экрана:",selectedScreenPosition
 })
 
 
-// отслеживаем скролл
-let scrollTimer=null
 
-window.addEventListener("scroll",()=>{
 
-clearTimeout(scrollTimer)
+// фиксированный скролл
 
-scrollTimer=setTimeout(()=>{
+let isScrolling=false
 
+function scrollStep(){
+
+if(isScrolling) return
+
+const card=document.querySelector(".card")
+
+const cardHeight=card.offsetHeight+10
+
+const scrollAmount=cardHeight*3
+
+isScrolling=true
+
+window.scrollBy({
+top:scrollAmount,
+behavior:"smooth"
+})
+
+setTimeout(()=>{
+
+isScrolling=false
 placePomelo()
 
-},150)
+},400)
+
+}
+
+
+
+// свайп
+let startY=0
+
+window.addEventListener("touchstart",(e)=>{
+startY=e.touches[0].clientY
+})
+
+window.addEventListener("touchend",(e)=>{
+
+let endY=e.changedTouches[0].clientY
+
+if(endY-startY>50){
+
+scrollStep()
+
+}
 
 })
 
 
+
+
+// появление помело
 
 function placePomelo(){
 
@@ -94,16 +139,12 @@ if(selectedScreenPosition===null) return
 
 const card=document.querySelector(".card")
 
-const cardHeight = card.offsetHeight + 10
+const cardHeight=card.offsetHeight+10
 
-const scrollY = window.scrollY
+const firstVisibleRow=Math.floor(window.scrollY/cardHeight)
 
-const firstVisibleRow = Math.floor(scrollY / cardHeight)
+const targetIndex=firstVisibleRow*2+selectedScreenPosition
 
-const targetIndex = firstVisibleRow*2 + selectedScreenPosition
-
-
-// убрать старое помело
 if(pomeloIndex!==null){
 
 products[pomeloIndex]={
@@ -114,12 +155,12 @@ img:"https://picsum.photos/200?random="+pomeloIndex
 
 }
 
-
-// поставить новое
 products[targetIndex]={
+
 name:"Помело",
 price:"199 ₽",
 img:"https://upload.wikimedia.org/wikipedia/commons/6/6c/Pomelo_fruit.jpg"
+
 }
 
 pomeloIndex=targetIndex
