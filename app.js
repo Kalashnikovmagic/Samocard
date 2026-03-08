@@ -3,7 +3,7 @@ const grid = document.getElementById("grid")
 let selectedScreenPosition = null
 let pomeloIndex = null
 
-// Список продуктов (пути к вашим фотографиям в папке images/products)
+// Массив из 22 товаров
 const productsData = [
   {name:"Молоко", img:"images/products/milk.jpg"},
   {name:"Яйца", img:"images/products/eggs.jpg"},
@@ -13,10 +13,23 @@ const productsData = [
   {name:"Сыр", img:"images/products/cheese.jpg"},
   {name:"Йогурт", img:"images/products/yogurt.jpg"},
   {name:"Шоколад", img:"images/products/chocolate.jpg"},
-  {name:"Печенье", img:"images/products/cookies.jpg"}
+  {name:"Печенье", img:"images/products/cookies.jpg"},
+  {name:"Апельсины", img:"images/products/orange.jpg"},
+  {name:"Масло", img:"images/products/butter.jpg"},
+  {name:"Курица", img:"images/products/chicken.jpg"},
+  {name:"Говядина", img:"images/products/beef.jpg"},
+  {name:"Лосось", img:"images/products/salmon.jpg"},
+  {name:"Помидоры", img:"images/products/tomato.jpg"},
+  {name:"Огурцы", img:"images/products/cucumber.jpg"},
+  {name:"Картофель", img:"images/products/potato.jpg"},
+  {name:"Лук", img:"images/products/onion.jpg"},
+  {name:"Морковь", img:"images/products/carrot.jpg"},
+  {name:"Перец", img:"images/products/pepper.jpg"},
+  {name:"Брокколи", img:"images/products/broccoli.jpg"},
+  {name:"Грибы", img:"images/products/mushroom.jpg"}
 ]
 
-// Создаём массив товаров (повторяем, чтобы было много)
+// Создаём длинный список из 400 товаров
 let products = []
 for(let i=0;i<400;i++){
   let item = productsData[i % productsData.length]
@@ -54,8 +67,7 @@ setTimeout(()=>{
   document.getElementById("splash").style.display="none"
 },2000)
 
-
-// выбор позиции на экране
+// Выбор позиции на экране
 grid.addEventListener("click", (e)=>{
   const cards = document.querySelectorAll(".card")
   cards.forEach((card,i)=>{
@@ -85,7 +97,7 @@ function startScroll(){
   scrolling = true
 
   const card = document.querySelector(".card")
-  const cardHeight = card.offsetHeight + 6
+  const cardHeight = card.offsetHeight + 12
   const rowsToScroll = 25
   const scrollDistance = cardHeight * rowsToScroll
   const start = window.scrollY
@@ -93,44 +105,57 @@ function startScroll(){
   let startTime = null
 
   function animate(time){
-    if(!startTime) startTime = time
-    let progress = (time - startTime)/duration
-    if(progress>1) progress = 1
-    let ease = 1 - Math.pow(1-progress,3) // ease-out
+    if(!startTime) startTime=time
+    let progress=(time-startTime)/duration
+    if(progress>1) progress=1
+    let ease=1-Math.pow(1-progress,3)
 
-    window.scrollTo(0, start + scrollDistance * ease)
+    window.scrollTo(0,start + scrollDistance*ease)
 
-    placePomeloDuringScroll() // подменяем помело во время скролла
+    placePomeloDuringScroll()
 
-    if(progress < 1){
+    if(progress<1){
       requestAnimationFrame(animate)
     }else{
       snapToRow()
-      scrolling = false
+      scrolling=false
     }
   }
 
   requestAnimationFrame(animate)
 }
 
-// привязка скролла к строкам
 function snapToRow(){
   const card = document.querySelector(".card")
-  const cardHeight = card.offsetHeight + 6
+  const cardHeight = card.offsetHeight + 12
   const row = Math.round(window.scrollY / cardHeight)
   window.scrollTo({top: row * cardHeight, behavior:"smooth"})
 }
 
-// подмена помело во время скролла
+// Подмена помело только в выбранной позиции
 function placePomeloDuringScroll(){
-  if(selectedScreenPosition===null) return
+  if(selectedScreenPosition === null) return
   const card = document.querySelector(".card")
-  const cardHeight = card.offsetHeight + 6
+  const cardHeight = card.offsetHeight + 12
   const firstRow = Math.floor(window.scrollY / cardHeight)
-  const targetIndex = firstRow*2 + selectedScreenPosition
+
+  const column = selectedScreenPosition % 2
+  const rowOnScreen = Math.floor(selectedScreenPosition / 2)
+  const targetIndex = (firstRow + rowOnScreen) * 2 + column
 
   if(pomeloIndex === targetIndex) return
 
+  // возвращаем предыдущую карточку на место
+  if(pomeloIndex !== null){
+    let prevItem = productsData[pomeloIndex % productsData.length]
+    products[pomeloIndex] = {
+      name: prevItem.name,
+      price: (80 + Math.floor(Math.random()*200))+" ₽",
+      img: prevItem.img
+    }
+  }
+
+  // вставляем помело
   products[targetIndex] = {
     name:"Помело",
     price:"199 ₽",
