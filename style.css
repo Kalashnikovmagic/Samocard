@@ -36,7 +36,7 @@ header{
   display:flex;
   align-items:center;
   justify-content:center;
-  border-radius:12px; /* слегка скругляем */
+  border-radius:12px; /* скругляем края */
   overflow:hidden;
 }
 
@@ -63,8 +63,8 @@ header{
   padding:2px 4px;
   font-size:12px;
   font-weight:600;
-  width:30%; /* ещё уже */
-  margin:4px 0 0 4px; /* расположение под фото */
+  width:30%; /* узкая кнопка */
+  margin:4px 0 0 4px; /* под фото */
 }
 
 .plus{
@@ -73,16 +73,17 @@ header{
   font-weight:400;
 }
 
+/* Splash с картинкой */
 #splash{
-  position:fixed;
-  width:100%;
-  height:100%;
-  background:#ff2d55;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:white;
-  font-size:32px;
-  font-weight:bold;
-  z-index:999;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background-image: url('images/splash.jpg'); /* путь к вашей заставке */
+  background-size: cover;      /* картинка полностью заполняет экран */
+  background-position: center; /* центрируем изображение */
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
 }
