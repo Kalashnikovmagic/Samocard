@@ -3,7 +3,7 @@ const grid = document.getElementById("grid")
 let selectedScreenPosition = null
 let pomeloIndex = null
 
-// Массив из 22 товаров
+// 22 продукта
 const productsData = [
   {name:"Молоко", img:"images/products/milk.jpg"},
   {name:"Яйца", img:"images/products/eggs.jpg"},
@@ -29,7 +29,7 @@ const productsData = [
   {name:"Грибы", img:"images/products/mushroom.jpg"}
 ]
 
-// Создаём длинный список из 400 товаров
+// длинный список
 let products = []
 for(let i=0;i<400;i++){
   let item = productsData[i % productsData.length]
@@ -40,7 +40,6 @@ for(let i=0;i<400;i++){
   })
 }
 
-// Рендер сетки
 function render(){
   grid.innerHTML = ""
   products.forEach((p,i)=>{
@@ -60,14 +59,16 @@ function render(){
   })
 }
 
-render()
-
-// splash
+// splash: через 2 секунды скрываем
 setTimeout(()=>{
   document.getElementById("splash").style.display="none"
-},2000)
+  document.getElementById("grid").style.display = "grid"
+  document.querySelector("header").style.display = "block"
+}, 2000)
 
-// Выбор позиции на экране
+render()
+
+// выбор позиции на экране
 grid.addEventListener("click", (e)=>{
   const cards = document.querySelectorAll(".card")
   cards.forEach((card,i)=>{
@@ -87,7 +88,7 @@ window.addEventListener("touchstart", (e)=>{
 
 window.addEventListener("touchend", (e)=>{
   let endY = e.changedTouches[0].clientY
-  if(startY - endY > 40){ // свайп вверх
+  if(startY - endY > 40){
     startScroll()
   }
 })
@@ -132,7 +133,7 @@ function snapToRow(){
   window.scrollTo({top: row * cardHeight, behavior:"smooth"})
 }
 
-// Подмена помело только в выбранной позиции
+// подмена помело
 function placePomeloDuringScroll(){
   if(selectedScreenPosition === null) return
   const card = document.querySelector(".card")
@@ -145,7 +146,6 @@ function placePomeloDuringScroll(){
 
   if(pomeloIndex === targetIndex) return
 
-  // возвращаем предыдущую карточку на место
   if(pomeloIndex !== null){
     let prevItem = productsData[pomeloIndex % productsData.length]
     products[pomeloIndex] = {
@@ -155,11 +155,10 @@ function placePomeloDuringScroll(){
     }
   }
 
-  // вставляем помело с новым путём
   products[targetIndex] = {
     name:"Помело",
     price:"199 ₽",
-    img:"images/products/pomelo.jpg" // <- исправленный путь
+    img:"images/products/pomelo.jpg"
   }
 
   pomeloIndex = targetIndex
