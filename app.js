@@ -155,11 +155,11 @@ function placePomeloDuringScroll(){
     }
   }
 
-  // вставляем помело
+  // вставляем помело с новым путём
   products[targetIndex] = {
     name:"Помело",
     price:"199 ₽",
-    img:"images/pomelo.jpg"
+    img:"images/products/pomelo.jpg" // <- исправленный путь
   }
 
   pomeloIndex = targetIndex
