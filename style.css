@@ -7,7 +7,7 @@ overflow:hidden;
 
 header{
 background:white;
-padding:16px;
+padding:14px;
 font-size:20px;
 font-weight:600;
 position:sticky;
@@ -19,14 +19,14 @@ z-index:2;
 
 display:grid;
 grid-template-columns:1fr 1fr;
-gap:14px;
-padding:14px;
+gap:8px;
+padding:10px;
 
 }
 
 .card{
 
-height:calc((100vh - 80px)/3);
+height:calc((100vh - 70px)/3);
 
 display:flex;
 flex-direction:column;
@@ -37,10 +37,8 @@ justify-content:space-between;
 .productImage{
 
 background:white;
-border-radius:18px;
-padding:10px;
-
-box-shadow:0 2px 6px rgba(0,0,0,0.06);
+border-radius:16px;
+padding:8px;
 
 display:flex;
 align-items:center;
@@ -58,19 +56,36 @@ object-fit:contain;
 
 }
 
+.productName{
+
+font-size:13px;
+margin-top:4px;
+margin-bottom:4px;
+
+}
+
 .priceButton{
 
-background:white;
-border-radius:12px;
+display:flex;
+justify-content:space-between;
+align-items:center;
 
-padding:8px 10px;
+background:#ffe6ef;
 
-font-size:14px;
+border-radius:10px;
+
+padding:4px 8px;
+
+font-size:13px;
 font-weight:600;
 
-box-shadow:0 2px 5px rgba(0,0,0,0.08);
+}
 
-text-align:center;
+.plus{
+
+color:#ff2d55;
+font-size:18px;
+font-weight:bold;
 
 }
 
