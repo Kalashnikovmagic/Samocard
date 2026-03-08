@@ -6,26 +6,25 @@ let jumpDone = false;
 
 let lastTapTime = 0;
 
-// порядок картинок
+// порядок картинок: fake, control, fake2, fake3, pomelo1-6
 const imagesList = [
-  {src:"images/fake.jpg", type:"normal"},     // 0: первая фейковая
-  {src:"images/control.jpg", type:"control"}, // 1: контрольная
-  {src:"images/fake2.jpg", type:"normal"},    // 2: вторая фейковая
-  {src:"images/pomelo1.jpg", type:"pomelo"},  // 3
-  {src:"images/pomelo2.jpg", type:"pomelo"},  // 4
-  {src:"images/pomelo3.jpg", type:"pomelo"},  // 5
-  {src:"images/pomelo4.jpg", type:"pomelo"},  // 6
-  {src:"images/pomelo5.jpg", type:"pomelo"},  // 7
-  {src:"images/pomelo6.jpg", type:"pomelo"}   // 8
+  {src:"images/fake.jpg", type:"normal"},      // 0: первая фейковая
+  {src:"images/control.jpg", type:"control"},  // 1: контрольная
+  {src:"images/fake2.jpg", type:"normal"},     // 2: вторая фейковая
+  {src:"images/fake3.jpg", type:"normal"},     // 3: третья фейковая
+  {src:"images/pomelo1.jpg", type:"pomelo"},   // 4
+  {src:"images/pomelo2.jpg", type:"pomelo"},   // 5
+  {src:"images/pomelo3.jpg", type:"pomelo"},   // 6
+  {src:"images/pomelo4.jpg", type:"pomelo"},   // 7
+  {src:"images/pomelo5.jpg", type:"pomelo"},   // 8
+  {src:"images/pomelo6.jpg", type:"pomelo"}    // 9
 ];
 
 // рендер картинок
 function renderImages(){
-
   container.innerHTML = "";
 
   imagesList.forEach((item)=>{
-
     const div = document.createElement("div");
     div.className = "image-card";
 
@@ -36,21 +35,16 @@ function renderImages(){
     div.appendChild(img);
 
     if(item.type === "control"){
-
       controlImageElement = img;
-
       for(let i=0;i<6;i++){
         const cell = document.createElement("div");
         cell.className = `cell-overlay cell-${i}`;
         div.appendChild(cell);
       }
-
     }
 
     container.appendChild(div);
-
   });
-
 }
 
 renderImages();
@@ -63,7 +57,6 @@ setTimeout(()=>{
 
 // двойной тап — только запоминаем позицию и меняем контрольную картинку
 container.addEventListener("click",(e)=>{
-
   const target = e.target;
 
   if(target.tagName !== "IMG") return;
@@ -72,7 +65,6 @@ container.addEventListener("click",(e)=>{
   const now = Date.now();
 
   if(now - lastTapTime < 300){
-
     const rect = target.getBoundingClientRect();
 
     const x = e.clientX - rect.left;
@@ -90,11 +82,9 @@ container.addEventListener("click",(e)=>{
     }
 
     jumpDone = false;
-
   }
 
   lastTapTime = now;
-
 });
 
 // плавная функция скролла с ease-out
@@ -111,7 +101,6 @@ function smoothScrollTo(element, duration = 800) {
     const progress = Math.min((timestamp - startTime) / duration, 1);
 
     const ease = 1 - Math.pow(1 - progress, 3); // cubic ease-out
-
     window.scrollTo(0, start + distance * ease);
 
     if(progress < 1) {
@@ -124,21 +113,19 @@ function smoothScrollTo(element, duration = 800) {
 
 // после первого скрола пользователя
 window.addEventListener("touchend",()=>{
-
   if(selectedPosition === null) return;
   if(jumpDone) return;
 
   jumpDone = true;
 
-  const pomeloIndex = 2 + selectedPosition; // смещаем на 2 (fake + control)
+  // смещаем на 4 картинки перед pomelo (fake, control, fake2, fake3)
+  const pomeloIndex = 4 + selectedPosition;
   const target = container.children[pomeloIndex];
 
-  // плавный скролл
   smoothScrollTo(target, 800);
 
   // блокируем дальнейший скролл после завершения анимации
   setTimeout(()=>{
     document.body.style.overflow = "hidden";
   }, 850);
-
 });
