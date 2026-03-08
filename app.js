@@ -4,6 +4,9 @@ let selectedPosition = null;
 let triggered = false;
 let controlImageElement = null;
 
+let startY = 0;
+let userStartedSwipe = false;
+
 // порядок картинок
 const imagesList = [
   {src:"images/fake.jpg", type:"normal"},
@@ -16,8 +19,7 @@ const imagesList = [
   {src:"images/pomelo6.jpg", type:"pomelo"}
 ];
 
-// создаём список картинок
-function renderImages() {
+function renderImages(){
 
   container.innerHTML = "";
 
@@ -33,8 +35,8 @@ function renderImages() {
 
     div.appendChild(img);
 
-    // запоминаем контрольную картинку
     if(item.type === "control"){
+
       controlImageElement = img;
 
       for(let i=0;i<6;i++){
@@ -42,6 +44,7 @@ function renderImages() {
         cell.className = `cell-overlay cell-${i}`;
         div.appendChild(cell);
       }
+
     }
 
     container.appendChild(div);
@@ -50,10 +53,10 @@ function renderImages() {
 
 }
 
-// splash 2 секунды
+// splash
 setTimeout(()=>{
-  document.getElementById("splash").style.display = "none";
-  container.style.display = "block";
+  document.getElementById("splash").style.display="none";
+  container.style.display="block";
 },2000);
 
 renderImages();
@@ -88,8 +91,9 @@ container.addEventListener("click",(e)=>{
     console.log("Выбрана позиция:", selectedPosition);
 
     triggered = false;
+    userStartedSwipe = false;
 
-    // меняем картинку control -> control2
+    // меняем картинку
     if(controlImageElement){
       controlImageElement.src = "images/control2.jpg";
     }
@@ -100,10 +104,22 @@ container.addEventListener("click",(e)=>{
 
 });
 
-// отслеживаем первый скролл
-window.addEventListener("scroll",()=>{
 
-  if(selectedPosition !== null && !triggered){
+// фиксируем начало свайпа
+window.addEventListener("touchstart",(e)=>{
+  startY = e.touches[0].clientY;
+});
+
+
+// ловим настоящий свайп
+window.addEventListener("touchmove",(e)=>{
+
+  if(selectedPosition === null) return;
+  if(triggered) return;
+
+  const currentY = e.touches[0].clientY;
+
+  if(Math.abs(startY - currentY) > 15){
 
     triggered = true;
 
