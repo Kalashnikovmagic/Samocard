@@ -49,32 +49,26 @@ object-fit:contain;
 font-size:13px;
 margin-top:2px;
 margin-bottom:2px;
+text-align:center;
 }
 
 .priceButton{
-
 display:flex;
 justify-content:space-between;
 align-items:center;
-
 background:#ffe6ef;
-
 border-radius:8px;
-
 padding:3px 6px;
-
 font-size:12px;
 font-weight:600;
-
 width:55%;
+margin:auto;
 }
 
 .plus{
-
 color:#ff2d55;
-font-size:16px;
+font-size:14px;
 font-weight:400;
-
 }
 
 #splash{
