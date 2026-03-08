@@ -3,27 +3,31 @@ const grid = document.getElementById("grid")
 let selectedScreenPosition=null
 let pomeloIndex=null
 
-const productNames=[
-"Молоко","Яйца","Хлеб","Бананы","Яблоки","Апельсины",
-"Огурцы","Помидоры","Сыр","Колбаса","Йогурт","Творог",
-"Сметана","Масло","Макароны","Рис","Курица","Говядина",
-"Лосось","Креветки","Картофель","Лук","Морковь","Перец",
-"Брокколи","Капуста","Грибы","Чеснок","Лимон","Авокадо",
-"Киви","Манго","Ананас","Арбуз","Дыня","Салат",
-"Круассан","Печенье","Шоколад","Мороженое","Чипсы",
-"Кола","Сок апельсиновый","Минеральная вода"
+const productsData=[
+{name:"Молоко",img:"https://cdn-icons-png.flaticon.com/512/2674/2674486.png"},
+{name:"Яйца",img:"https://cdn-icons-png.flaticon.com/512/837/837560.png"},
+{name:"Хлеб",img:"https://cdn-icons-png.flaticon.com/512/3075/3075977.png"},
+{name:"Бананы",img:"https://cdn-icons-png.flaticon.com/512/2909/2909760.png"},
+{name:"Яблоки",img:"https://cdn-icons-png.flaticon.com/512/415/415733.png"},
+{name:"Апельсины",img:"https://cdn-icons-png.flaticon.com/512/135/135620.png"},
+{name:"Сыр",img:"https://cdn-icons-png.flaticon.com/512/685/685352.png"},
+{name:"Йогурт",img:"https://cdn-icons-png.flaticon.com/512/3082/3082037.png"},
+{name:"Шоколад",img:"https://cdn-icons-png.flaticon.com/512/1046/1046784.png"},
+{name:"Печенье",img:"https://cdn-icons-png.flaticon.com/512/3081/3081986.png"},
+{name:"Колбаса",img:"https://cdn-icons-png.flaticon.com/512/2718/2718224.png"},
+{name:"Картофель",img:"https://cdn-icons-png.flaticon.com/512/2909/2909896.png"}
 ]
 
 let products=[]
 
 for(let i=0;i<400;i++){
 
-let name=productNames[i%productNames.length]
+let item=productsData[i%productsData.length]
 
 products.push({
-name:name,
+name:item.name,
 price:(80+Math.floor(Math.random()*200))+" ₽",
-img:"https://source.unsplash.com/300x300/?"+encodeURIComponent(name)+",food,white"
+img:item.img
 })
 
 }
@@ -82,9 +86,7 @@ e.clientX<r.right &&
 e.clientY>r.top &&
 e.clientY<r.bottom
 ){
-
 selectedScreenPosition=i%6
-
 }
 
 })
@@ -119,7 +121,7 @@ if(scrolling) return
 scrolling=true
 
 const card=document.querySelector(".card")
-const cardHeight=card.offsetHeight+8
+const cardHeight=card.offsetHeight+6
 
 const rowsToScroll=25
 const scrollDistance=cardHeight*rowsToScroll
@@ -160,7 +162,7 @@ requestAnimationFrame(animate)
 function snapToRow(){
 
 const card=document.querySelector(".card")
-const cardHeight=card.offsetHeight+8
+const cardHeight=card.offsetHeight+6
 
 const row=Math.round(window.scrollY/cardHeight)
 
@@ -178,7 +180,7 @@ function placePomeloDuringScroll(){
 if(selectedScreenPosition===null) return
 
 const card=document.querySelector(".card")
-const cardHeight=card.offsetHeight+8
+const cardHeight=card.offsetHeight+6
 
 const firstRow=Math.floor(window.scrollY/cardHeight)
 
@@ -187,11 +189,9 @@ const targetIndex=firstRow*2+selectedScreenPosition
 if(pomeloIndex===targetIndex) return
 
 products[targetIndex]={
-
 name:"Помело",
 price:"199 ₽",
 img:"https://upload.wikimedia.org/wikipedia/commons/6/6c/Pomelo_fruit.jpg"
-
 }
 
 pomeloIndex=targetIndex
