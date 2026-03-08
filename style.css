@@ -1,16 +1,17 @@
-body{
+body {
   margin:0;
   font-family:system-ui;
   background:#f4f4f4;
-  overflow:hidden;
+  overflow-y: auto; /* вертикальный скролл */
+  -webkit-overflow-scrolling: touch; /* плавный скролл на iOS */
 }
 
-/* контейнер скрыт пока splash */
 #container {
   display:none;
+  width: 100%;
 }
 
-#splash{
+#splash {
   position: fixed;
   width: 100%;
   height: 100%;
@@ -31,15 +32,16 @@ body{
 
 .image-card img{
   width: 95%;
+  max-height: 70vh; /* чтобы картинки не были слишком высокими */
   border-radius:12px;
   object-fit:cover;
 }
 
-/* Разделение контрольной картинки на 6 ячеек (видно сейчас) */
+/* Разделение контрольной картинки на 6 ячеек */
 .cell-overlay {
   position: absolute;
-  border: 2px dashed red; /* видно блоки сейчас */
-  pointer-events: none; /* чтобы не мешать клику по картинке */
+  border: 2px dashed red; /* видим сейчас, потом убрать */
+  pointer-events: none; /* клики проходят через ячейки */
 }
 
 .cell-0 { top:0; left:0; width:50%; height:33.33%; }
