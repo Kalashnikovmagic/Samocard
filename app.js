@@ -1,13 +1,9 @@
 const container = document.getElementById("container");
 
 let selectedPosition = null;
-let triggered = false;
 let controlImageElement = null;
+let scrollActivated = false;
 
-let startY = 0;
-let userStartedSwipe = false;
-
-// порядок картинок
 const imagesList = [
   {src:"images/fake.jpg", type:"normal"},
   {src:"images/control.jpg", type:"control"},
@@ -31,7 +27,6 @@ function renderImages(){
     const img = document.createElement("img");
     img.src = item.src;
     img.dataset.type = item.type;
-    img.dataset.index = index;
 
     div.appendChild(img);
 
@@ -53,17 +48,21 @@ function renderImages(){
 
 }
 
+renderImages();
+
+
 // splash
 setTimeout(()=>{
   document.getElementById("splash").style.display="none";
   container.style.display="block";
 },2000);
 
-renderImages();
+
 
 let lastTapTime = 0;
 
-// двойной тап
+
+// ДВОЙНОЙ ТАП
 container.addEventListener("click",(e)=>{
 
   const target = e.target;
@@ -71,66 +70,51 @@ container.addEventListener("click",(e)=>{
   if(target.tagName !== "IMG") return;
   if(target.dataset.type !== "control") return;
 
-  const currentTime = new Date().getTime();
+  const now = new Date().getTime();
 
-  if(currentTime - lastTapTime < 300){
+  if(now - lastTapTime < 300){
 
     const rect = target.getBoundingClientRect();
 
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    const blockWidth = rect.width / 2;
-    const blockHeight = rect.height / 3;
-
-    const col = x < blockWidth ? 0 : 1;
-    const row = Math.floor(y / blockHeight);
+    const col = x < rect.width/2 ? 0 : 1;
+    const row = Math.floor(y / (rect.height/3));
 
     selectedPosition = row * 2 + col + 1;
 
-    console.log("Выбрана позиция:", selectedPosition);
-
-    triggered = false;
-    userStartedSwipe = false;
+    console.log("позиция выбрана:", selectedPosition);
 
     // меняем картинку
     if(controlImageElement){
       controlImageElement.src = "images/control2.jpg";
     }
 
+    // НИЧЕГО БОЛЬШЕ НЕ ДЕЛАЕМ
+
   }
 
-  lastTapTime = currentTime;
+  lastTapTime = now;
 
 });
 
 
-// фиксируем начало свайпа
-window.addEventListener("touchstart",(e)=>{
-  startY = e.touches[0].clientY;
-});
 
-
-// ловим настоящий свайп
-window.addEventListener("touchmove",(e)=>{
+// ПЕРВЫЙ СКРОЛЛ ПОЛЬЗОВАТЕЛЯ
+window.addEventListener("scroll",()=>{
 
   if(selectedPosition === null) return;
-  if(triggered) return;
+  if(scrollActivated) return;
 
-  const currentY = e.touches[0].clientY;
+  scrollActivated = true;
 
-  if(Math.abs(startY - currentY) > 15){
+  const pomeloIndex = 1 + selectedPosition;
 
-    triggered = true;
+  const target = container.children[pomeloIndex];
 
-    const pomeloIndex = 1 + selectedPosition;
-
-    const targetDiv = container.children[pomeloIndex];
-
-    targetDiv.scrollIntoView({
-      behavior:"smooth"
-    });
-
-  }
+  target.scrollIntoView({
+    behavior:"smooth"
+  });
 
 });
