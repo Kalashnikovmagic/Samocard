@@ -6,7 +6,7 @@ let jumpDone = false;
 
 let lastTapTime = 0;
 
-// порядок картинок: fake, control, fake2, fake3, pomelo1-6
+// порядок картинок
 const imagesList = [
   {src:"images/fake.jpg", type:"normal"},      // 0: первая фейковая
   {src:"images/control.jpg", type:"control"},  // 1: контрольная
@@ -118,8 +118,8 @@ window.addEventListener("touchend",()=>{
 
   jumpDone = true;
 
-  // смещаем на 4 картинки перед pomelo (fake, control, fake2, fake3)
-  const pomeloIndex = 4 + selectedPosition;
+  // смещение на 3 картинки перед pomelo (fake + control + fake2/fake3)
+  const pomeloIndex = 3 + selectedPosition;
   const target = container.children[pomeloIndex];
 
   smoothScrollTo(target, 800);
