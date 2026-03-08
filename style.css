@@ -54,5 +54,5 @@ body {
 .cell-1 { top:0; left:50%; width:50%; height:33.33%; }
 .cell-2 { top:33.33%; left:0; width:50%; height:31%; }   /* ряд 2 чуть меньше */
 .cell-3 { top:33.33%; left:50%; width:50%; height:31%; }
-.cell-4 { top:64%; left:0; width:50%; height:36%; }      /* ряд 3 поднят вверх */
-.cell-5 { top:64%; left:50%; width:50%; height:36%; }
+.cell-4 { top:64%; left:0; width:50%; height:36%; border-top:none; }
+.cell-5 { top:64%; left:50%; width:50%; height:36%; border-top:none; }
