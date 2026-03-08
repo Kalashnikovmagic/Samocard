@@ -61,7 +61,7 @@ setTimeout(()=>{
 
 
 
-// двойной тап
+// двойной тап по контрольной картинке
 container.addEventListener("click",(e)=>{
 
   const target = e.target;
@@ -99,7 +99,7 @@ container.addEventListener("click",(e)=>{
 
 
 
-// ждём завершение свайпа пользователя
+// после первого скрола пользователя
 window.addEventListener("touchend",()=>{
 
   if(selectedPosition === null) return;
@@ -108,12 +108,16 @@ window.addEventListener("touchend",()=>{
   jumpDone = true;
 
   const pomeloIndex = 1 + selectedPosition;
-
   const target = container.children[pomeloIndex];
 
   target.scrollIntoView({
     behavior:"smooth",
     block:"center"
   });
+
+  // блокируем дальнейший скрол
+  setTimeout(()=>{
+    document.body.style.overflow = "hidden";
+  },400);
 
 });
