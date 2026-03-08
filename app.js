@@ -1,5 +1,6 @@
 const container = document.getElementById("container");
 let selectedPosition = null; // выбранная позиция на контрольной картинке (1-6)
+let triggered = false; // флаг, чтобы прокрутка срабатывала только один раз
 
 // список картинок: фейковая, контрольная, 6 картинок с помело
 const imagesList = [
@@ -13,7 +14,7 @@ const imagesList = [
   {src:"images/pomelo6.jpg", type:"pomelo"}
 ];
 
-// рендерим список картинок
+// рендер списка картинок
 function renderImages() {
   container.innerHTML = "";
   imagesList.forEach((item, index)=>{
@@ -46,7 +47,7 @@ setTimeout(()=>{
 
 renderImages();
 
-// двойной тап на контрольной картинке
+// двойной тап на контрольной картинке — только запоминаем позицию
 let lastTapTime = 0;
 
 container.addEventListener("click", (e)=>{
@@ -66,11 +67,19 @@ container.addEventListener("click", (e)=>{
     const row = Math.floor(y / blockHeight);
     selectedPosition = row * 2 + col + 1; // 1-6
     console.log("Выбрана позиция:", selectedPosition);
+    triggered = false; // сбрасываем флаг, чтобы скролл сработал при следующем движении
+  }
+  lastTapTime = currentTime;
+});
 
-    // после выбора позиции скроллим к соответствующей картинке с помело
+// слушаем событие scroll, чтобы отследить движение пользователя
+let isUserScrolling = false;
+
+window.addEventListener('scroll', ()=>{
+  if(selectedPosition !== null && !triggered){
+    triggered = true; // чтобы прокрутка сработала один раз
     const pomeloIndex = 1 + selectedPosition; // контрольная=1, +1..6
     const targetDiv = container.children[pomeloIndex];
     targetDiv.scrollIntoView({behavior:"smooth"});
   }
-  lastTapTime = currentTime;
 });
