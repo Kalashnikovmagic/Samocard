@@ -2,7 +2,7 @@ body {
   margin:0;
   font-family:system-ui;
   background:#f4f4f4;
-  overflow-y: auto; /* включаем вертикальный скролл */
+  overflow-y: auto; /* вертикальный скролл */
   -webkit-overflow-scrolling: touch; /* плавный скролл на мобильных */
 }
 
@@ -52,7 +52,7 @@ body {
 
 .cell-0 { top:0; left:0; width:50%; height:33.33%; }
 .cell-1 { top:0; left:50%; width:50%; height:33.33%; }
-.cell-2 { top:33.33%; left:0; width:50%; height:33.33%; }
-.cell-3 { top:33.33%; left:50%; width:50%; height:33.33%; }
-.cell-4 { top:66.66%; left:0; width:50%; height:33.34%; }
-.cell-5 { top:66.66%; left:50%; width:50%; height:33.34%; }
+.cell-2 { top:33.33%; left:0; width:50%; height:31%; }   /* ряд 2 чуть меньше */
+.cell-3 { top:33.33%; left:50%; width:50%; height:31%; }
+.cell-4 { top:64%; left:0; width:50%; height:36%; }      /* ряд 3 поднят вверх */
+.cell-5 { top:64%; left:50%; width:50%; height:36%; }
