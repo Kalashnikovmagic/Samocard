@@ -17,6 +17,7 @@ const imagesList = [
   {src:"images/pomelo6.jpg", type:"pomelo"}
 ];
 
+// рендер картинок
 function renderImages(){
 
   container.innerHTML = "";
@@ -52,16 +53,14 @@ function renderImages(){
 
 renderImages();
 
-
-// splash
+// splash 2 секунды
 setTimeout(()=>{
   document.getElementById("splash").style.display="none";
   container.style.display="block";
 },2000);
 
 
-
-// двойной тап по контрольной картинке
+// двойной тап — только запоминаем позицию и меняем контрольную картинку
 container.addEventListener("click",(e)=>{
 
   const target = e.target;
@@ -98,6 +97,31 @@ container.addEventListener("click",(e)=>{
 });
 
 
+// плавная функция скролла с ease-out
+function smoothScrollTo(element, duration = 800) {
+  const start = window.scrollY;
+  const rect = element.getBoundingClientRect();
+  const target = start + rect.top - (window.innerHeight - rect.height)/2;
+
+  const distance = target - start;
+  let startTime = null;
+
+  function step(timestamp) {
+    if(!startTime) startTime = timestamp;
+    const progress = Math.min((timestamp - startTime) / duration, 1);
+
+    const ease = 1 - Math.pow(1 - progress, 3); // cubic ease-out
+
+    window.scrollTo(0, start + distance * ease);
+
+    if(progress < 1) {
+      requestAnimationFrame(step);
+    }
+  }
+
+  requestAnimationFrame(step);
+}
+
 
 // после первого скрола пользователя
 window.addEventListener("touchend",()=>{
@@ -110,14 +134,12 @@ window.addEventListener("touchend",()=>{
   const pomeloIndex = 1 + selectedPosition;
   const target = container.children[pomeloIndex];
 
-  target.scrollIntoView({
-    behavior:"smooth",
-    block:"center"
-  });
+  // плавный скролл
+  smoothScrollTo(target, 800);
 
-  // блокируем дальнейший скрол
+  // блокируем дальнейший скролл через 0.85 сек
   setTimeout(()=>{
     document.body.style.overflow = "hidden";
-  },400);
+  }, 850);
 
 });
