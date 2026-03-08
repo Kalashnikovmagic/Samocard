@@ -1,8 +1,10 @@
 const container = document.getElementById("container");
-let selectedPosition = null; // выбранная позиция на контрольной картинке (1-6)
-let triggered = false; // флаг, чтобы прокрутка срабатывала только один раз
 
-// список картинок: фейковая, контрольная, 6 картинок с помело
+let selectedPosition = null;
+let triggered = false;
+let controlImageElement = null;
+
+// порядок картинок
 const imagesList = [
   {src:"images/fake.jpg", type:"normal"},
   {src:"images/control.jpg", type:"control"},
@@ -14,20 +16,27 @@ const imagesList = [
   {src:"images/pomelo6.jpg", type:"pomelo"}
 ];
 
-// рендер списка картинок
+// создаём список картинок
 function renderImages() {
+
   container.innerHTML = "";
-  imagesList.forEach((item, index)=>{
+
+  imagesList.forEach((item,index)=>{
+
     const div = document.createElement("div");
     div.className = "image-card";
+
     const img = document.createElement("img");
     img.src = item.src;
     img.dataset.type = item.type;
     img.dataset.index = index;
+
     div.appendChild(img);
 
-    // если контрольная картинка — добавляем ячейки
+    // запоминаем контрольную картинку
     if(item.type === "control"){
+      controlImageElement = img;
+
       for(let i=0;i<6;i++){
         const cell = document.createElement("div");
         cell.className = `cell-overlay cell-${i}`;
@@ -36,10 +45,12 @@ function renderImages() {
     }
 
     container.appendChild(div);
+
   });
+
 }
 
-// splash 2 секунды, потом показываем контейнер
+// splash 2 секунды
 setTimeout(()=>{
   document.getElementById("splash").style.display = "none";
   container.style.display = "block";
@@ -47,39 +58,63 @@ setTimeout(()=>{
 
 renderImages();
 
-// двойной тап на контрольной картинке — только запоминаем позицию
 let lastTapTime = 0;
 
-container.addEventListener("click", (e)=>{
+// двойной тап
+container.addEventListener("click",(e)=>{
+
   const target = e.target;
+
   if(target.tagName !== "IMG") return;
   if(target.dataset.type !== "control") return;
 
   const currentTime = new Date().getTime();
-  if(currentTime - lastTapTime < 300){ // двойной тап
+
+  if(currentTime - lastTapTime < 300){
+
     const rect = target.getBoundingClientRect();
+
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
+
     const blockWidth = rect.width / 2;
     const blockHeight = rect.height / 3;
 
     const col = x < blockWidth ? 0 : 1;
     const row = Math.floor(y / blockHeight);
-    selectedPosition = row * 2 + col + 1; // 1-6
+
+    selectedPosition = row * 2 + col + 1;
+
     console.log("Выбрана позиция:", selectedPosition);
-    triggered = false; // сбрасываем флаг, чтобы скролл сработал при следующем движении
+
+    triggered = false;
+
+    // меняем картинку control -> control2
+    if(controlImageElement){
+      controlImageElement.src = "images/control2.jpg";
+    }
+
   }
+
   lastTapTime = currentTime;
+
 });
 
-// слушаем событие scroll, чтобы отследить движение пользователя
-let isUserScrolling = false;
+// отслеживаем первый скролл
+window.addEventListener("scroll",()=>{
 
-window.addEventListener('scroll', ()=>{
   if(selectedPosition !== null && !triggered){
-    triggered = true; // чтобы прокрутка сработала один раз
-    const pomeloIndex = 1 + selectedPosition; // контрольная=1, +1..6
+
+    triggered = true;
+
+    const pomeloIndex = 1 + selectedPosition;
+
     const targetDiv = container.children[pomeloIndex];
-    targetDiv.scrollIntoView({behavior:"smooth"});
+
+    targetDiv.scrollIntoView({
+      behavior:"smooth"
+    });
+
   }
+
 });
