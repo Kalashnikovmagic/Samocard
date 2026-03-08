@@ -1,86 +1,91 @@
 body{
-margin:0;
-font-family:system-ui;
-background:#f4f4f4;
-overflow:hidden;
+  margin:0;
+  font-family:system-ui;
+  background:#f4f4f4;
+  overflow:hidden;
 }
 
 header{
-background:white;
-padding:14px;
-font-size:20px;
-font-weight:600;
-position:sticky;
-top:0;
-z-index:2;
+  background:white;
+  padding:14px;
+  font-size:20px;
+  font-weight:600;
+  position:sticky;
+  top:0;
+  z-index:2;
 }
 
 #grid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:6px;
-padding:8px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+  padding:8px;
 }
 
 .card{
-height:calc((100vh - 70px)/3);
-display:flex;
-flex-direction:column;
-justify-content:space-between;
+  height:calc((100vh - 70px)/3);
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end; /* чтобы кнопка была снизу */
+  position:relative;
 }
 
 .productImage{
-background:white;
-border-radius:16px;
-padding:6px;
-display:flex;
-align-items:center;
-justify-content:center;
-height:68%;
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
 .productImage img{
-width:85%;
-height:85%;
-object-fit:contain;
+  width:100%;
+  height:100%;
+  object-fit:cover; /* фото полностью на карточку */
 }
 
 .productName{
-font-size:13px;
-margin-top:2px;
-margin-bottom:2px;
-text-align:center;
+  font-size:13px;
+  margin:0;
+  position:absolute;
+  bottom:28px; /* чуть выше кнопки */
+  left:4px;
+  color:#000;
+  font-weight:600;
+  text-shadow:0 0 3px rgba(255,255,255,0.8);
 }
 
 .priceButton{
-display:flex;
-justify-content:space-between;
-align-items:center;
-background:#ffe6ef;
-border-radius:8px;
-padding:3px 6px;
-font-size:12px;
-font-weight:600;
-width:55%;
-margin:auto;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:#ffe6ef;
+  border-radius:8px;
+  padding:2px 4px;
+  font-size:12px;
+  font-weight:600;
+  width:35%; /* ещё уже */
+  position:absolute;
+  bottom:4px;
+  left:4px;
 }
 
 .plus{
-color:#ff2d55;
-font-size:14px;
-font-weight:400;
+  color:#ff2d55;
+  font-size:14px;
+  font-weight:400;
 }
 
 #splash{
-position:fixed;
-width:100%;
-height:100%;
-background:#ff2d55;
-display:flex;
-align-items:center;
-justify-content:center;
-color:white;
-font-size:32px;
-font-weight:bold;
-z-index:999;
+  position:fixed;
+  width:100%;
+  height:100%;
+  background:#ff2d55;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:white;
+  font-size:32px;
+  font-weight:bold;
+  z-index:999;
 }
