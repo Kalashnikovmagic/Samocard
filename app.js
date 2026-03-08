@@ -2,11 +2,10 @@ const container = document.getElementById("container");
 
 let selectedPosition = null;
 let controlImageElement = null;
-let scrollDone = false;
+let jumpDone = false;
 
 let lastTapTime = 0;
 
-// список картинок
 const imagesList = [
   {src:"images/fake.jpg", type:"normal"},
   {src:"images/control.jpg", type:"control"},
@@ -62,7 +61,7 @@ setTimeout(()=>{
 
 
 
-// ДВОЙНОЙ ТАП — только запоминаем выбор
+// двойной тап
 container.addEventListener("click",(e)=>{
 
   const target = e.target;
@@ -90,7 +89,7 @@ container.addEventListener("click",(e)=>{
       controlImageElement.src = "images/control2.jpg";
     }
 
-    scrollDone = false;
+    jumpDone = false;
 
   }
 
@@ -100,21 +99,21 @@ container.addEventListener("click",(e)=>{
 
 
 
-// ПЕРВОЕ движение пальца (это и есть пользовательский скрол)
-window.addEventListener("touchmove",()=>{
+// ждём завершение свайпа пользователя
+window.addEventListener("touchend",()=>{
 
   if(selectedPosition === null) return;
-  if(scrollDone) return;
+  if(jumpDone) return;
 
-  scrollDone = true;
+  jumpDone = true;
 
   const pomeloIndex = 1 + selectedPosition;
+
   const target = container.children[pomeloIndex];
 
-  setTimeout(()=>{
-    target.scrollIntoView({
-      behavior:"smooth"
-    });
-  },50);
+  target.scrollIntoView({
+    behavior:"smooth",
+    block:"center"
+  });
 
 });
