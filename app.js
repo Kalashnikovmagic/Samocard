@@ -1,8 +1,7 @@
 const container = document.getElementById("container");
+let selectedPosition = null; // выбранная позиция на контрольной картинке (1-6)
 
-let selectedPosition = null; // позиция на контрольной картинке 1-6
-
-// список картинок по вертикали: фейковая, контрольная, pomelo1..6
+// список картинок: фейковая, контрольная, 6 картинок с помело
 const imagesList = [
   {src:"images/fake.jpg", type:"normal"},
   {src:"images/control.jpg", type:"control"},
@@ -69,8 +68,7 @@ container.addEventListener("click", (e)=>{
     console.log("Выбрана позиция:", selectedPosition);
 
     // после выбора позиции скроллим к соответствующей картинке с помело
-    // pomelo картинки идут с index 2..7 (0=fake,1=control)
-    const pomeloIndex = 1 + selectedPosition; // контрольная =1, +1..6
+    const pomeloIndex = 1 + selectedPosition; // контрольная=1, +1..6
     const targetDiv = container.children[pomeloIndex];
     targetDiv.scrollIntoView({behavior:"smooth"});
   }
