@@ -1,5 +1,2 @@
-self.addEventListener("install", event => {
-console.log("Service Worker installed")
-})
-
-self.addEventListener("fetch", event => {})
+self.addEventListener("install",()=>{})
+self.addEventListener("fetch",()=>{})
