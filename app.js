@@ -1,20 +1,33 @@
 const grid = document.getElementById("grid")
 
+let selectedScreenPosition=null
+let pomeloIndex=null
+
+// список продуктов
+const productNames=[
+"Молоко","Яйца","Хлеб","Бананы","Яблоки","Апельсины",
+"Огурцы","Помидоры","Сыр","Колбаса","Йогурт","Творог",
+"Сметана","Масло","Макароны","Рис","Курица","Говядина",
+"Лосось","Креветки","Картофель","Лук","Морковь","Перец",
+"Брокколи","Капуста","Грибы","Чеснок","Лимон","Авокадо",
+"Киви","Манго","Ананас","Арбуз","Дыня","Салат","Багет",
+"Круассан","Печенье","Шоколад","Мороженое","Чипсы",
+"Кола","Сок апельсиновый","Минеральная вода"
+]
+
 let products=[]
 
-// создаём много товаров
-for(let i=1;i<=400;i++){
+for(let i=0;i<400;i++){
+
+let name=productNames[i%productNames.length]
 
 products.push({
-name:"Товар "+i,
-price:(50+i)+" ₽",
-img:"https://picsum.photos/200?random="+i
+name:name,
+price:(80+Math.floor(Math.random()*200))+" ₽",
+img:"https://source.unsplash.com/300x300/?"+encodeURIComponent(name)+",food,isolated,white"
 })
 
 }
-
-let selectedScreenPosition=null
-let pomeloIndex=null
 
 function render(){
 
@@ -26,9 +39,15 @@ const card=document.createElement("div")
 card.className="card"
 
 card.innerHTML=`
+
+<div class="productImage">
 <img src="${p.img}">
-<div class="title">${p.name}</div>
-<div class="price">${p.price}</div>
+</div>
+
+<div class="priceButton">
+${p.price}
+</div>
+
 `
 
 grid.appendChild(card)
@@ -41,9 +60,7 @@ render()
 
 // splash
 setTimeout(()=>{
-
 document.getElementById("splash").style.display="none"
-
 },2000)
 
 
@@ -66,8 +83,6 @@ e.clientY<r.bottom
 
 selectedScreenPosition=i%6
 
-console.log("позиция экрана:",selectedScreenPosition)
-
 }
 
 })
@@ -76,41 +91,8 @@ console.log("позиция экрана:",selectedScreenPosition)
 
 
 
-
-// фиксированный скролл
-
-let isScrolling=false
-
-function scrollStep(){
-
-if(isScrolling) return
-
-const card=document.querySelector(".card")
-
-const cardHeight=card.offsetHeight+10
-
-const scrollAmount=cardHeight*3
-
-isScrolling=true
-
-window.scrollBy({
-top:scrollAmount,
-behavior:"smooth"
-})
-
-setTimeout(()=>{
-
-isScrolling=false
-placePomelo()
-
-},400)
-
-}
-
-
-
-// свайп
 let startY=0
+let scrolling=false
 
 window.addEventListener("touchstart",(e)=>{
 startY=e.touches[0].clientY
@@ -120,9 +102,10 @@ window.addEventListener("touchend",(e)=>{
 
 let endY=e.changedTouches[0].clientY
 
-if(endY-startY>50){
+// свайп вверх
+if(startY-endY>40){
 
-scrollStep()
+startScroll()
 
 }
 
@@ -130,27 +113,94 @@ scrollStep()
 
 
 
+function startScroll(){
 
-// появление помело
+if(scrolling) return
 
-function placePomelo(){
+scrolling=true
+
+const card=document.querySelector(".card")
+const cardHeight=card.offsetHeight+14
+
+const rowsToScroll=25
+const scrollDistance=cardHeight*rowsToScroll
+
+const start=window.scrollY
+const duration=900
+
+let startTime=null
+
+function animate(time){
+
+if(!startTime) startTime=time
+
+let progress=(time-startTime)/duration
+
+if(progress>1) progress=1
+
+let ease=1-Math.pow(1-progress,3)
+
+window.scrollTo(0,start+scrollDistance*ease)
+
+placePomeloDuringScroll()
+
+if(progress<1){
+
+requestAnimationFrame(animate)
+
+}else{
+
+snapToRow()
+
+scrolling=false
+
+}
+
+}
+
+requestAnimationFrame(animate)
+
+}
+
+
+
+function snapToRow(){
+
+const card=document.querySelector(".card")
+const cardHeight=card.offsetHeight+14
+
+const row=Math.round(window.scrollY/cardHeight)
+
+window.scrollTo({
+top:row*cardHeight,
+behavior:"smooth"
+})
+
+}
+
+
+
+function placePomeloDuringScroll(){
 
 if(selectedScreenPosition===null) return
 
 const card=document.querySelector(".card")
+const cardHeight=card.offsetHeight+14
 
-const cardHeight=card.offsetHeight+10
+const firstRow=Math.floor(window.scrollY/cardHeight)
 
-const firstVisibleRow=Math.floor(window.scrollY/cardHeight)
+const targetIndex=firstRow*2+selectedScreenPosition
 
-const targetIndex=firstVisibleRow*2+selectedScreenPosition
+if(pomeloIndex===targetIndex) return
 
 if(pomeloIndex!==null){
 
+let name=productNames[pomeloIndex%productNames.length]
+
 products[pomeloIndex]={
-name:"Товар "+pomeloIndex,
-price:(50+pomeloIndex)+" ₽",
-img:"https://picsum.photos/200?random="+pomeloIndex
+name:name,
+price:(80+Math.floor(Math.random()*200))+" ₽",
+img:"https://source.unsplash.com/300x300/?"+encodeURIComponent(name)+",food,isolated,white"
 }
 
 }
