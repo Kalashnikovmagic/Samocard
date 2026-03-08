@@ -18,7 +18,7 @@ header{
 #grid{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:12px; /* увеличенные промежутки между карточками */
+  gap:12px; /* промежутки между карточками */
   padding:12px;
 }
 
@@ -32,24 +32,24 @@ header{
 
 .productImage{
   width:100%;
-  height:calc(100% - 24px); /* оставляем место под кнопку */
+  height:calc(100% - 28px); /* оставляем место под кнопку */
   display:flex;
   align-items:center;
   justify-content:center;
-  border-radius:12px; /* немного скругляем края */
-  overflow:hidden; /* чтобы фото не вылезало за края */
+  border-radius:12px; /* слегка скругляем */
+  overflow:hidden;
 }
 
 .productImage img{
   width:100%;
   height:100%;
   object-fit:cover;
-  border-radius:12px; /* слегка скругляем сами фото */
+  border-radius:12px;
 }
 
 .productName{
   font-size:13px;
-  margin:4px 0 0 4px;
+  margin:2px 0 0 4px;
   color:#000;
   font-weight:600;
 }
@@ -60,10 +60,10 @@ header{
   align-items:center;
   background:#ffe6ef;
   border-radius:8px;
-  padding:2px 6px;
+  padding:2px 4px;
   font-size:12px;
   font-weight:600;
-  width:50%; /* кнопка узкая */
+  width:30%; /* ещё уже */
   margin:4px 0 0 4px; /* расположение под фото */
 }
 
