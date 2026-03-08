@@ -5,90 +5,46 @@ body{
   overflow:hidden;
 }
 
-/* Скрываем шапку и сетку до окончания splash */
-#grid, header {
-  display: none;
+/* контейнер скрыт пока splash */
+#container {
+  display:none;
 }
 
-header{
-  background:white;
-  padding:14px;
-  font-size:20px;
-  font-weight:600;
-  position:sticky;
-  top:0;
-  z-index:2;
-}
-
-#grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px; /* промежутки между карточками */
-  padding:12px;
-}
-
-.card{
-  height:calc((100vh - 70px)/3);
-  display:flex;
-  flex-direction:column;
-  justify-content:flex-start;
-  position:relative;
-}
-
-.productImage{
-  width:100%;
-  height:calc(100% - 28px); /* оставляем место под кнопку */
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:12px;
-  overflow:hidden;
-}
-
-.productImage img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  border-radius:12px;
-}
-
-.productName{
-  font-size:13px;
-  margin:2px 0 0 4px;
-  color:#000;
-  font-weight:600;
-}
-
-.priceButton{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background:#ffe6ef;
-  border-radius:8px;
-  padding:2px 4px;
-  font-size:12px;
-  font-weight:600;
-  width:30%;
-  margin:4px 0 0 4px;
-}
-
-.plus{
-  color:#ff2d55;
-  font-size:14px;
-  font-weight:400;
-}
-
-/* Splash с картинкой */
 #splash{
   position: fixed;
   width: 100%;
   height: 100%;
-  background-image: url('images/splash.jpg'); /* путь к вашей заставке */
+  background-image: url('images/splash.jpg');
   background-size: cover;
   background-position: center;
-  background-repeat: no-repeat;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   z-index: 999;
 }
+
+/* вертикальный список картинок */
+.image-card{
+  width: 100%;
+  margin-bottom: 12px;
+  position: relative;
+  display:flex;
+  justify-content:center;
+}
+
+.image-card img{
+  width: 95%;
+  border-radius:12px;
+  object-fit:cover;
+}
+
+/* Разделение контрольной картинки на 6 ячеек (видно сейчас) */
+.cell-overlay {
+  position: absolute;
+  border: 2px dashed red; /* видно блоки сейчас */
+  pointer-events: none; /* чтобы не мешать клику по картинке */
+}
+
+.cell-0 { top:0; left:0; width:50%; height:33.33%; }
+.cell-1 { top:0; left:50%; width:50%; height:33.33%; }
+.cell-2 { top:33.33%; left:0; width:50%; height:33.33%; }
+.cell-3 { top:33.33%; left:50%; width:50%; height:33.33%; }
+.cell-4 { top:66.66%; left:0; width:50%; height:33.34%; }
+.cell-5 { top:66.66%; left:50%; width:50%; height:33.34%; }
