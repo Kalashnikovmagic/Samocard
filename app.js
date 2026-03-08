@@ -1,166 +1,78 @@
-const grid = document.getElementById("grid")
+const container = document.getElementById("container");
 
-let selectedScreenPosition = null
-let pomeloIndex = null
+let selectedPosition = null; // позиция на контрольной картинке 1-6
 
-// 22 продукта
-const productsData = [
-  {name:"Молоко", img:"images/products/milk.jpg"},
-  {name:"Яйца", img:"images/products/eggs.jpg"},
-  {name:"Хлеб", img:"images/products/bread.jpg"},
-  {name:"Бананы", img:"images/products/banana.jpg"},
-  {name:"Яблоки", img:"images/products/apple.jpg"},
-  {name:"Сыр", img:"images/products/cheese.jpg"},
-  {name:"Йогурт", img:"images/products/yogurt.jpg"},
-  {name:"Шоколад", img:"images/products/chocolate.jpg"},
-  {name:"Печенье", img:"images/products/cookies.jpg"},
-  {name:"Апельсины", img:"images/products/orange.jpg"},
-  {name:"Масло", img:"images/products/butter.jpg"},
-  {name:"Курица", img:"images/products/chicken.jpg"},
-  {name:"Говядина", img:"images/products/beef.jpg"},
-  {name:"Лосось", img:"images/products/salmon.jpg"},
-  {name:"Помидоры", img:"images/products/tomato.jpg"},
-  {name:"Огурцы", img:"images/products/cucumber.jpg"},
-  {name:"Картофель", img:"images/products/potato.jpg"},
-  {name:"Лук", img:"images/products/onion.jpg"},
-  {name:"Морковь", img:"images/products/carrot.jpg"},
-  {name:"Перец", img:"images/products/pepper.jpg"},
-  {name:"Брокколи", img:"images/products/broccoli.jpg"},
-  {name:"Грибы", img:"images/products/mushroom.jpg"}
-]
+// список картинок по вертикали: фейковая, контрольная, pomelo1..6
+const imagesList = [
+  {src:"images/fake.jpg", type:"normal"},
+  {src:"images/control.jpg", type:"control"},
+  {src:"images/pomelo1.jpg", type:"pomelo"},
+  {src:"images/pomelo2.jpg", type:"pomelo"},
+  {src:"images/pomelo3.jpg", type:"pomelo"},
+  {src:"images/pomelo4.jpg", type:"pomelo"},
+  {src:"images/pomelo5.jpg", type:"pomelo"},
+  {src:"images/pomelo6.jpg", type:"pomelo"}
+];
 
-// длинный список
-let products = []
-for(let i=0;i<400;i++){
-  let item = productsData[i % productsData.length]
-  products.push({
-    name: item.name,
-    price: (80 + Math.floor(Math.random()*200)) + " ₽",
-    img: item.img
-  })
+// рендерим список картинок
+function renderImages() {
+  container.innerHTML = "";
+  imagesList.forEach((item, index)=>{
+    const div = document.createElement("div");
+    div.className = "image-card";
+    const img = document.createElement("img");
+    img.src = item.src;
+    img.dataset.type = item.type;
+    img.dataset.index = index;
+    div.appendChild(img);
+
+    // если контрольная картинка — добавляем ячейки
+    if(item.type === "control"){
+      for(let i=0;i<6;i++){
+        const cell = document.createElement("div");
+        cell.className = `cell-overlay cell-${i}`;
+        div.appendChild(cell);
+      }
+    }
+
+    container.appendChild(div);
+  });
 }
 
-function render(){
-  grid.innerHTML = ""
-  products.forEach((p,i)=>{
-    const card = document.createElement("div")
-    card.className = "card"
-    card.innerHTML = `
-      <div class="productImage">
-        <img src="${p.img}">
-      </div>
-      <div class="productName">${p.name}</div>
-      <div class="priceButton">
-        <span>${p.price}</span>
-        <span class="plus">+</span>
-      </div>
-    `
-    grid.appendChild(card)
-  })
-}
-
-// splash: через 2 секунды скрываем
+// splash 2 секунды, потом показываем контейнер
 setTimeout(()=>{
-  document.getElementById("splash").style.display="none"
-  document.getElementById("grid").style.display = "grid"
-  document.querySelector("header").style.display = "block"
-}, 2000)
+  document.getElementById("splash").style.display = "none";
+  container.style.display = "block";
+},2000);
 
-render()
+renderImages();
 
-// выбор позиции на экране
-grid.addEventListener("click", (e)=>{
-  const cards = document.querySelectorAll(".card")
-  cards.forEach((card,i)=>{
-    const r = card.getBoundingClientRect()
-    if(e.clientX>r.left && e.clientX<r.right && e.clientY>r.top && e.clientY<r.bottom){
-      selectedScreenPosition = i % 6
-    }
-  })
-})
+// двойной тап на контрольной картинке
+let lastTapTime = 0;
 
-let startY = 0
-let scrolling = false
+container.addEventListener("click", (e)=>{
+  const target = e.target;
+  if(target.tagName !== "IMG") return;
+  if(target.dataset.type !== "control") return;
 
-window.addEventListener("touchstart", (e)=>{
-  startY = e.touches[0].clientY
-})
+  const currentTime = new Date().getTime();
+  if(currentTime - lastTapTime < 300){ // двойной тап
+    const rect = target.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const blockWidth = rect.width / 2;
+    const blockHeight = rect.height / 3;
 
-window.addEventListener("touchend", (e)=>{
-  let endY = e.changedTouches[0].clientY
-  if(startY - endY > 40){
-    startScroll()
+    const col = x < blockWidth ? 0 : 1;
+    const row = Math.floor(y / blockHeight);
+    selectedPosition = row * 2 + col + 1; // 1-6
+    console.log("Выбрана позиция:", selectedPosition);
+
+    // после выбора позиции скроллим к соответствующей картинке с помело
+    // pomelo картинки идут с index 2..7 (0=fake,1=control)
+    const pomeloIndex = 1 + selectedPosition; // контрольная =1, +1..6
+    const targetDiv = container.children[pomeloIndex];
+    targetDiv.scrollIntoView({behavior:"smooth"});
   }
-})
-
-function startScroll(){
-  if(scrolling) return
-  scrolling = true
-
-  const card = document.querySelector(".card")
-  const cardHeight = card.offsetHeight + 12
-  const rowsToScroll = 25
-  const scrollDistance = cardHeight * rowsToScroll
-  const start = window.scrollY
-  const duration = 900
-  let startTime = null
-
-  function animate(time){
-    if(!startTime) startTime=time
-    let progress=(time-startTime)/duration
-    if(progress>1) progress=1
-    let ease=1-Math.pow(1-progress,3)
-
-    window.scrollTo(0,start + scrollDistance*ease)
-
-    placePomeloDuringScroll()
-
-    if(progress<1){
-      requestAnimationFrame(animate)
-    }else{
-      snapToRow()
-      scrolling=false
-    }
-  }
-
-  requestAnimationFrame(animate)
-}
-
-function snapToRow(){
-  const card = document.querySelector(".card")
-  const cardHeight = card.offsetHeight + 12
-  const row = Math.round(window.scrollY / cardHeight)
-  window.scrollTo({top: row * cardHeight, behavior:"smooth"})
-}
-
-// подмена помело
-function placePomeloDuringScroll(){
-  if(selectedScreenPosition === null) return
-  const card = document.querySelector(".card")
-  const cardHeight = card.offsetHeight + 12
-  const firstRow = Math.floor(window.scrollY / cardHeight)
-
-  const column = selectedScreenPosition % 2
-  const rowOnScreen = Math.floor(selectedScreenPosition / 2)
-  const targetIndex = (firstRow + rowOnScreen) * 2 + column
-
-  if(pomeloIndex === targetIndex) return
-
-  if(pomeloIndex !== null){
-    let prevItem = productsData[pomeloIndex % productsData.length]
-    products[pomeloIndex] = {
-      name: prevItem.name,
-      price: (80 + Math.floor(Math.random()*200))+" ₽",
-      img: prevItem.img
-    }
-  }
-
-  products[targetIndex] = {
-    name:"Помело",
-    price:"199 ₽",
-    img:"images/products/pomelo.jpg"
-  }
-
-  pomeloIndex = targetIndex
-  render()
-}
+  lastTapTime = currentTime;
+});
