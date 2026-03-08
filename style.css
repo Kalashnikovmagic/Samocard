@@ -46,8 +46,8 @@ body {
 /* Разделение контрольной картинки на 6 ячеек (видно пока) */
 .cell-overlay {
   position: absolute;
-  border: 2px dashed red; /* видно сейчас, потом убрать */
-  pointer-events: none; /* клики проходят через ячейки */
+  border: none; /* границы теперь невидимы */
+  pointer-events: none; /* клики всё ещё проходят через ячейки */
 }
 
 .cell-0 { top:0; left:0; width:50%; height:33.33%; }
