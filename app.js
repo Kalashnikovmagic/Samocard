@@ -8,8 +8,8 @@ let lastTapTime = 0;
 
 const imagesList = [
   {src:"images/fake.jpg", type:"normal"},     // 1️⃣ первая фейковая
-  {src:"images/fake2.jpg", type:"normal"},    // 2️⃣ новая фейковая картинка
-  {src:"images/control.jpg", type:"control"}, // 3️⃣ контрольная
+  {src:"images/control.jpg", type:"control"}, // 2️⃣ контрольная
+  {src:"images/fake2.jpg", type:"normal"},    // 3️⃣ вторая фейковая
   {src:"images/pomelo1.jpg", type:"pomelo"},
   {src:"images/pomelo2.jpg", type:"pomelo"},
   {src:"images/pomelo3.jpg", type:"pomelo"},
