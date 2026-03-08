@@ -6,16 +6,17 @@ let jumpDone = false;
 
 let lastTapTime = 0;
 
+// порядок картинок
 const imagesList = [
-  {src:"images/fake.jpg", type:"normal"},     // 1️⃣ первая фейковая
-  {src:"images/control.jpg", type:"control"}, // 2️⃣ контрольная
-  {src:"images/fake2.jpg", type:"normal"},    // 3️⃣ вторая фейковая
-  {src:"images/pomelo1.jpg", type:"pomelo"},
-  {src:"images/pomelo2.jpg", type:"pomelo"},
-  {src:"images/pomelo3.jpg", type:"pomelo"},
-  {src:"images/pomelo4.jpg", type:"pomelo"},
-  {src:"images/pomelo5.jpg", type:"pomelo"},
-  {src:"images/pomelo6.jpg", type:"pomelo"}
+  {src:"images/fake.jpg", type:"normal"},     // 0: первая фейковая
+  {src:"images/control.jpg", type:"control"}, // 1: контрольная
+  {src:"images/fake2.jpg", type:"normal"},    // 2: вторая фейковая
+  {src:"images/pomelo1.jpg", type:"pomelo"},  // 3
+  {src:"images/pomelo2.jpg", type:"pomelo"},  // 4
+  {src:"images/pomelo3.jpg", type:"pomelo"},  // 5
+  {src:"images/pomelo4.jpg", type:"pomelo"},  // 6
+  {src:"images/pomelo5.jpg", type:"pomelo"},  // 7
+  {src:"images/pomelo6.jpg", type:"pomelo"}   // 8
 ];
 
 // рендер картинок
@@ -60,7 +61,6 @@ setTimeout(()=>{
   container.style.display="block";
 },2000);
 
-
 // двойной тап — только запоминаем позицию и меняем контрольную картинку
 container.addEventListener("click",(e)=>{
 
@@ -97,7 +97,6 @@ container.addEventListener("click",(e)=>{
 
 });
 
-
 // плавная функция скролла с ease-out
 function smoothScrollTo(element, duration = 800) {
   const start = window.scrollY;
@@ -123,7 +122,6 @@ function smoothScrollTo(element, duration = 800) {
   requestAnimationFrame(step);
 }
 
-
 // после первого скрола пользователя
 window.addEventListener("touchend",()=>{
 
@@ -132,13 +130,13 @@ window.addEventListener("touchend",()=>{
 
   jumpDone = true;
 
-  const pomeloIndex = 1 + selectedPosition;
+  const pomeloIndex = 2 + selectedPosition; // смещаем на 2 (fake + control)
   const target = container.children[pomeloIndex];
 
   // плавный скролл
   smoothScrollTo(target, 800);
 
-  // блокируем дальнейший скролл через 0.85 сек
+  // блокируем дальнейший скролл после завершения анимации
   setTimeout(()=>{
     document.body.style.overflow = "hidden";
   }, 850);
