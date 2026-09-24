@@ -1,13 +1,13 @@
 body {
-  margin:0;
-  font-family:system-ui;
-  background:#f4f4f4;
-  overflow-y: auto; /* вертикальный скролл */
-  -webkit-overflow-scrolling: touch; /* плавный скролл на мобильных */
+  margin: 0;
+  font-family: system-ui;
+  background: #f4f4f4;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 #container {
-  display:none;
+  display: none;
   width: 100%;
 }
 
@@ -15,44 +15,28 @@ body {
   position: fixed;
   width: 100%;
   height: 100%;
-  background-image: url('images/splash.jpg');
+  background-image: url("images/splash.jpg");
   background-size: cover;
   background-position: center;
   z-index: 999;
 }
 
-/* вертикальный список картинок */
-.image-card{
+.image-card {
   width: 100%;
   margin-bottom: 12px;
   position: relative;
-  display:flex;
-  justify-content:center;
+  display: flex;
+  justify-content: center;
 }
 
-.image-card img{
+.image-card img {
   width: 95%;
-  border-radius:12px;
-  object-fit:cover;
+  border-radius: 12px;
+  object-fit: cover;
 }
 
-/* fake-картинка — отображаем полную высоту */
 .image-card img[src*="fake.jpg"] {
   height: auto;
   max-height: none;
   object-fit: contain;
 }
-
-/* Разделение контрольной картинки на 6 ячеек (видно пока) */
-.cell-overlay {
-  position: absolute;
-  border: none; /* границы теперь невидимы */
-  pointer-events: none; /* клики всё ещё проходят через ячейки */
-}
-
-.cell-0 { top:0; left:0; width:50%; height:33.33%; }
-.cell-1 { top:0; left:50%; width:50%; height:33.33%; }
-.cell-2 { top:33.33%; left:0; width:50%; height:31%; }   /* ряд 2 чуть меньше */
-.cell-3 { top:33.33%; left:50%; width:50%; height:31%; }
-.cell-4 { top:64%; left:0; width:50%; height:36%; border-top:none; }
-.cell-5 { top:64%; left:50%; width:50%; height:36%; border-top:none; }
