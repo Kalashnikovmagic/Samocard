@@ -59,58 +59,63 @@ function getSelectedPosition(target, clientX, clientY) {
   return row * 2 + col + 1;
 }
 
-function lockScrollAtCurrentPosition() {
-  const scrollY = window.scrollY;
+function startControlledJump(element, duration = 800) {
+  /*
+   * Important for iOS:
+   * Do NOT call window.scrollTo(), scrollIntoView(), or scrollTop here.
+   *
+   * Recent WebKit versions deliberately allow native momentum to continue
+   * while JavaScript changes the scroll position. That means a JS scroll
+   * animation can finish and then iOS can keep moving the page.
+   *
+   * Instead we freeze the document at its current position and animate the
+   * visual content with transform(). The native iOS scroller is therefore
+   * completely removed from the animation.
+   */
 
-  // iOS can keep compositor momentum alive even after overflow:hidden.
-  // Fixing the body removes the page from the native scrolling layer.
+  const startScrollY = window.scrollY;
+  const rect = element.getBoundingClientRect();
+
+  const desiredOffset =
+    rect.top - (window.innerHeight - rect.height) / 2;
+
+  const distance = desiredOffset;
+
+  // Freeze the actual page at exactly its current visual position.
   document.documentElement.style.overflow = "hidden";
 
   document.body.style.position = "fixed";
-  document.body.style.top = `-${scrollY}px`;
+  document.body.style.top = `-${startScrollY}px`;
   document.body.style.left = "0";
   document.body.style.right = "0";
   document.body.style.width = "100%";
   document.body.style.overflow = "hidden";
 
-  return scrollY;
-}
+  // From now on, ONLY the container moves.
+  container.style.willChange = "transform";
 
-function smoothScrollTo(element, duration = 800) {
-  // Calculate everything while the document is still normally scrollable.
-  const start = window.scrollY;
-  const rect = element.getBoundingClientRect();
-  const target = start + rect.top - (window.innerHeight - rect.height) / 2;
-  const distance = target - start;
+  const startTime = performance.now();
 
-  // From this point the iOS native scroller is no longer responsible
-  // for the movement. We animate the fixed body's top position instead.
-  lockScrollAtCurrentPosition();
-
-  let startTime = null;
-
-  function step(timestamp) {
-    if (!startTime) startTime = timestamp;
-
-    const progress = Math.min((timestamp - startTime) / duration, 1);
+  function step(now) {
+    const progress = Math.min((now - startTime) / duration, 1);
     const ease = 1 - Math.pow(1 - progress, 3);
-    const current = start + distance * ease;
+    const current = distance * ease;
 
-    document.body.style.top = `-${current}px`;
+    container.style.transform =
+      `translate3d(0, ${-current}px, 0)`;
 
     if (progress < 1) {
       requestAnimationFrame(step);
     } else {
-      document.body.style.top = `-${target}px`;
+      container.style.transform =
+        `translate3d(0, ${-distance}px, 0)`;
+      container.style.willChange = "auto";
     }
   }
 
   requestAnimationFrame(step);
 }
 
-// Handle the double tap directly on touchend.
-// This is important on iOS: the old click -> window.touchend chain
-// allowed the native scroll momentum to continue after our animation.
 container.addEventListener("touchend", event => {
   if (jumpDone) return;
 
@@ -125,8 +130,8 @@ container.addEventListener("touchend", event => {
     return;
   }
 
-  // This is the second tap. Stop the native touch scrolling for this
-  // gesture before starting our own controlled movement.
+  // This is the second tap.
+  // Prevent iOS from treating this touch as a native scroll gesture.
   event.preventDefault();
 
   const touch = event.changedTouches[0];
@@ -148,7 +153,7 @@ container.addEventListener("touchend", event => {
 
   if (!pomelo) return;
 
-  smoothScrollTo(pomelo, 800);
+  startControlledJump(pomelo, 800);
 
   lastTapTime = 0;
 }, { passive: false });
