@@ -75,6 +75,18 @@ container.addEventListener("click", event => {
   lastTapTime = now;
 });
 
+function lockScroll() {
+  const scrollY = window.scrollY;
+
+  document.documentElement.style.overflow = "hidden";
+  document.body.style.overflow = "hidden";
+
+  // Immediately cancel any native momentum that may still be running.
+  window.scrollTo(0, scrollY);
+
+  return scrollY;
+}
+
 function smoothScrollTo(element, duration = 800) {
   const start = window.scrollY;
   const rect = element.getBoundingClientRect();
@@ -92,6 +104,9 @@ function smoothScrollTo(element, duration = 800) {
 
     if (progress < 1) {
       requestAnimationFrame(step);
+    } else {
+      // Force the exact final position so there is no residual drift.
+      window.scrollTo(0, target);
     }
   }
 
@@ -108,11 +123,11 @@ window.addEventListener("touchend", () => {
 
   if (!target) return;
 
-  smoothScrollTo(target, 800);
+  // Lock native scrolling BEFORE starting the scripted movement.
+  // This prevents iOS momentum scrolling from fighting the animation.
+  lockScroll();
 
-  setTimeout(() => {
-    document.body.style.overflow = "hidden";
-  }, 850);
+  smoothScrollTo(target, 800);
 });
 
 // Регистрация Service Worker для полноценной офлайн-работы.
