@@ -48,50 +48,45 @@ setTimeout(() => {
   container.style.display = "block";
 }, 2000);
 
-container.addEventListener("click", event => {
-  const target = event.target;
+function getSelectedPosition(target, clientX, clientY) {
+  const rect = target.getBoundingClientRect();
+  const x = clientX - rect.left;
+  const y = clientY - rect.top;
 
-  if (target.tagName !== "IMG" || target.dataset.type !== "control") return;
+  const col = x < rect.width / 2 ? 0 : 1;
+  const row = Math.floor(y / (rect.height / 3));
 
-  const now = Date.now();
+  return row * 2 + col + 1;
+}
 
-  if (now - lastTapTime < 300) {
-    const rect = target.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
-
-    const col = x < rect.width / 2 ? 0 : 1;
-    const row = Math.floor(y / (rect.height / 3));
-
-    selectedPosition = row * 2 + col + 1;
-
-    if (controlImageElement) {
-      controlImageElement.src = "images/control2.jpg";
-    }
-
-    jumpDone = false;
-  }
-
-  lastTapTime = now;
-});
-
-function lockScroll() {
+function lockScrollAtCurrentPosition() {
   const scrollY = window.scrollY;
 
+  // iOS can keep compositor momentum alive even after overflow:hidden.
+  // Fixing the body removes the page from the native scrolling layer.
   document.documentElement.style.overflow = "hidden";
-  document.body.style.overflow = "hidden";
 
-  // Immediately cancel any native momentum that may still be running.
-  window.scrollTo(0, scrollY);
+  document.body.style.position = "fixed";
+  document.body.style.top = `-${scrollY}px`;
+  document.body.style.left = "0";
+  document.body.style.right = "0";
+  document.body.style.width = "100%";
+  document.body.style.overflow = "hidden";
 
   return scrollY;
 }
 
 function smoothScrollTo(element, duration = 800) {
+  // Calculate everything while the document is still normally scrollable.
   const start = window.scrollY;
   const rect = element.getBoundingClientRect();
   const target = start + rect.top - (window.innerHeight - rect.height) / 2;
   const distance = target - start;
+
+  // From this point the iOS native scroller is no longer responsible
+  // for the movement. We animate the fixed body's top position instead.
+  lockScrollAtCurrentPosition();
+
   let startTime = null;
 
   function step(timestamp) {
@@ -99,36 +94,64 @@ function smoothScrollTo(element, duration = 800) {
 
     const progress = Math.min((timestamp - startTime) / duration, 1);
     const ease = 1 - Math.pow(1 - progress, 3);
+    const current = start + distance * ease;
 
-    window.scrollTo(0, start + distance * ease);
+    document.body.style.top = `-${current}px`;
 
     if (progress < 1) {
       requestAnimationFrame(step);
     } else {
-      // Force the exact final position so there is no residual drift.
-      window.scrollTo(0, target);
+      document.body.style.top = `-${target}px`;
     }
   }
 
   requestAnimationFrame(step);
 }
 
-window.addEventListener("touchend", () => {
-  if (selectedPosition === null || jumpDone) return;
+// Handle the double tap directly on touchend.
+// This is important on iOS: the old click -> window.touchend chain
+// allowed the native scroll momentum to continue after our animation.
+container.addEventListener("touchend", event => {
+  if (jumpDone) return;
+
+  const target = event.target;
+
+  if (target.tagName !== "IMG" || target.dataset.type !== "control") return;
+
+  const now = Date.now();
+
+  if (now - lastTapTime >= 300) {
+    lastTapTime = now;
+    return;
+  }
+
+  // This is the second tap. Stop the native touch scrolling for this
+  // gesture before starting our own controlled movement.
+  event.preventDefault();
+
+  const touch = event.changedTouches[0];
+
+  selectedPosition = getSelectedPosition(
+    target,
+    touch.clientX,
+    touch.clientY
+  );
+
+  if (controlImageElement) {
+    controlImageElement.src = "images/control2.jpg";
+  }
 
   jumpDone = true;
 
   const pomeloIndex = 3 + selectedPosition;
-  const target = container.children[pomeloIndex];
+  const pomelo = container.children[pomeloIndex];
 
-  if (!target) return;
+  if (!pomelo) return;
 
-  // Lock native scrolling BEFORE starting the scripted movement.
-  // This prevents iOS momentum scrolling from fighting the animation.
-  lockScroll();
+  smoothScrollTo(pomelo, 800);
 
-  smoothScrollTo(target, 800);
-});
+  lastTapTime = 0;
+}, { passive: false });
 
 // Регистрация Service Worker для полноценной офлайн-работы.
 if ("serviceWorker" in navigator) {
